@@ -1,0 +1,57 @@
+Notes for 34401
+
+Before you can do RS-232 you must enable it in the options menu. 
+
+Command format:
+BASECOMMANDextraletters:VARIABLE(? <- Get current value) %PARAMETERS%
+
+
+
+Commands to remember:
+-------------------------------------------------------------------------------
+
+Reset:
+*RST
+
+Set Remote:
+SYST:REM
+
+Clear Event registers:
+*CLS
+
+Show message on screen:
+DISP:TEXT[?]	"%MESSAGE%"
+
+Start Sampling and store:
+INIT
+
+Start sampling and output:
+READ?
+
+Get count of stored data:
+DATA:POINts?
+
+Get stored samples:
+FETCh?
+
+Number of samples to take per trigger:
+SAMP:COUN(?)	%NUMBER%
+
+Get errors:
+SYSTem:ERRor?
+
+Beeper control
+SYSTem:BEEPer[:STATe](?) [ON|OFF]
+Make a beep sound(Will beep even if beep disabled), Exa:
+SYSTem:BEEPer
+Disable beeper, Exa:
+SYSTem:BEEPer:STATe OFF
+
+Trigger source setup:
+TRIG:SOUR(?) [IMM|BUS|EXT]
+
+Collected data setup
+CONF:VOLT:[DC|AC] %MAX%, %RESOLUTION%
+
+
+
