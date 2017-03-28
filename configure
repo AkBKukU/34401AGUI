@@ -2,5 +2,5 @@
 
 rm ui_*.py
 rm ui_*.pyc
-pyside-uic mainwindow.ui > ui_mainWindow.py
-pyside-uic resolutionHelp.ui > ui_helpWindow.py
+pyside-uic 20-assets/mainwindow.ui > ui_mainWindow.py
+pyside-uic 20-assets/resolutionHelp.ui > ui_helpWindow.py

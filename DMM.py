@@ -8,17 +8,20 @@ class DMM34401A:
 		
 	# Constructor
 	# Initialize connection to DMM
-	def __init__(self,connectionPath):
+	def __init__(self,connectionPath, baud, par):
+		# Configure serial connection
 		self.ser = serial.Serial(connectionPath)
-		self.ser.baudrate = 9600
+		self.ser.baudrate = int(baud)
 		self.ser.bytesize = 7
-		self.ser.parity = 'E'
+		self.ser.parity = par[:1]
 		self.ser.stopbits = 2
 
-
+		# DMM Commands
 		self.sep = ":"
 		self.delim = ", "
 		self.CONF = "CONF"
+		self.SAMP = "SAMP"
+		self.TRIG = "TRIG"
 		self.RST = "*RST"
 		self.CLS = "*CLS"
 		self.SYST = "SYST"
@@ -37,7 +40,9 @@ class DMM34401A:
 		self.FRES = ":FRES "
 		self.FRE = ":FREQ "
 		self.PER = ":PER "
-		self.CONT = ":CONT "
+		self.CONT = ":CONT "		
+		self.COUN = ":COUN "
+		self.DEL = ":DEL "
 		self.DIOD = ":DIOD "
 		self.DC = "DC "
 		self.AC = "AC "
@@ -46,6 +51,7 @@ class DMM34401A:
 		self.CURRDC = self.CURR+self.DC
 		self.CURRAC = self.CURR+self.AC
 
+		# Default values
 		self.overload = 10
 		self.lowerLimit = 0.01
 		self.measurementMode = self.DC
@@ -63,13 +69,14 @@ class DMM34401A:
 	def __del__(self):
 		self.ser.close()
 
+	# Clear all registers on DMM
 	def reset(self):
 		self.serWrite(self.RST) # Reset
 		self.serWrite(self.CLS) # Reset
 		self.serWrite(self.SYST+self.REM) # Set to remote mode
 		time.sleep(1)
 
-
+	# Return the current measureing mode ID
 	def getMode(self,i):
 		return {
 			0 : self.VOLTDC,
@@ -84,6 +91,7 @@ class DMM34401A:
 			9 : self.DIOD
 		}[i]
 
+	# Return the current measureing mode name
 	def getModeName(self,i=""):
 
 		if (i == ""):
@@ -102,35 +110,42 @@ class DMM34401A:
 			self.DIOD : "Diode"
 		}[i]
 
+	# Set the current measureing mode
 	def setMeasurementMode(self,measurementMode):
 
 		self.measurementMode = self.getMode(measurementMode)
 		self.writeConf()
 
+	# Set the current resolution
 	def setResolution(self,overload,lowerLimit):
 		self.overload = overload
 		self.lowerLimit = lowerLimit
 		self.writeConf()
 
+	# Get a reading from the DMM
 	def takeMeasurement(self):
 		self.serWrite(self.READ) 
-		return float(self.ser.readline())
+		output = self.ser.readline()
+		result = output.split(',')
+		return result
 
+	# Send CONF command for setting mode an resolution
 	def writeConf(self):
-		# Set high max and low resolution DC voltage mesurement
+		# Set high max and low resolution mesurement mode
 		if( self.measurementMode == self.CONT ) or ( self.measurementMode == self.DIOD ):
 			parameters = ""
 		else:
 			parameters = str(self.overload) + self.delim + str(self.lowerLimit)
 
 		self.serWrite(self.CONF+self.measurementMode+parameters) 
-		time.sleep(1)
+		time.sleep(1) # Wait for it to take
 
+	# Send a command to the DMM
 	def serWrite(self,data):
 		print "Sending: " + data
 		self.ser.write(data+"\n")
 
-
+	# Get error messages from DMM
 	def errorCheck(self):
 		self.serWrite(self.SYST+self.ERR)
 		time.sleep(0.5)
@@ -145,7 +160,15 @@ class DMM34401A:
 
 		return errors
 
+	# Set the number of samples to take per trigger
+	def setSampleCount(self,samples):
+		self.serWrite(self.SAMP + self.COUN+str(samples))
 
+	# Set delay between multiple samples per trigger
+	def setTriggerDelay(self,delay):
+		self.serWrite(self.TRIG + self.DEL+str(delay))
+
+	# Turn display on or off
 	def setdisplay(self,state):
 		self.display = state
 		if( self.display ):
@@ -153,12 +176,15 @@ class DMM34401A:
 		else:
 			self.serWrite(self.DISP + " " + self.OFF)
 
+	# Write text to display
 	def setdisplayText(self,text):
 		self.serWrite(self.DISP + self.TEXT + " \"" + text + "\"")
 
+	# Reset display to normal
 	def setdisplayClear(self):
 		self.serWrite(self.DISP + self.TEXT + self.CLE)
 
+	# Turn beeper on or off
 	def setBeeper(self,state):
 		self.beeper = state
 		if( self.beeper ):
