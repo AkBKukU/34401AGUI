@@ -65,27 +65,9 @@ class MainWindow(QtGui.QMainWindow):
 	# Load file from server
 	def reset(self):
 		self.dmm.reset()
-		eggdelay = 0.15
-		self.dmm.setdisplayText(" -- EGGMETER")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("-- EGGMETER ")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("- EGGMETER 5")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText(" EGGMETER 50")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("EGGMETER 500")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("GGMETER 5000")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("GMETER 5000 ")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("METER 5000 -")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("ETER 5000 --")
-		time.sleep(eggdelay)
-		self.dmm.setdisplayText("TER 5000 -- ")
-
+		delay = 1
+		self.dmm.setdisplayText("AkBKukU")
+		time.sleep(delay)
 		self.dmm.setdisplayClear()
 		self.dmm.setSampleCount(1)
 		self.dmm.setTriggerDelay(0)
