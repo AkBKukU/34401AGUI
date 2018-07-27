@@ -12,9 +12,10 @@ class DMM34401A:
 		# Configure serial connection
 		self.ser = serial.Serial(connectionPath)
 		self.ser.baudrate = int(baud)
-		self.ser.bytesize = 7
+		self.ser.bytesize = 8
 		self.ser.parity = par[:1]
 		self.ser.stopbits = 2
+		self.ser.xon_xoff = True
 
 		# DMM Commands
 		self.sep = ":"
